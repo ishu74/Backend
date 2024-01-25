@@ -9,7 +9,15 @@ dotenv.config({
     path :'./env'
 })
 
-connectDB();
+connectDB()
+.then(()=>{
+  app.lisent(process.env.PORT || 8000, () =>{
+    console.log(`server is running at port : ${process.env.PORT} `);
+  })
+})
+.catch((error)=>{
+  console.log("mongoDB connection failed  !!!", error);
+})
 
 /*
 
