@@ -6,7 +6,7 @@ const asyncHandler = (requestHandler) => {
 };
 
 export { asyncHandler };
-
+// async handler is a higher order function
 // const aysncHandler = (fn) => async (req, res, next) => {
 //     try {
 //         await fn(req,res,next)

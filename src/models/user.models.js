@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import Jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
 const userSchema = new Schema(
@@ -48,17 +48,21 @@ const userSchema = new Schema(
   },
   { timestamps: true }
 );
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
+// arrow function dosent have this ka access thats why use normal function
+userSchema.pre("save", async function (next) {// pre encrypt before saving 
+  if (!this.isModified("password")) return next();// if password is not modified then return next
 
-  this.password = await bcrypt.hash(this.password, 10); //10 is how much round
+  //password incryption in hash
+  this.password = await bcrypt.hash(this.password, 10); //agar modifie hua hai to encrypt krdo uske baad next hoga
+  //10 is how much round
   next();
 });
-
+//methods me dot lgaao aur method bna lo
+// mongoose  gives permission to create methods like  ispasswordcorrect costoms methods
 userSchema.methods.isPasswordCorrect = async function (password) {
-  return await bcrypt.compare(password, this.password);
+  return await bcrypt.compare(password, this.password); //comapring password with encrypted password
 };
-
+//generating asscess token
 userSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     {
@@ -69,19 +73,19 @@ userSchema.methods.generateAccessToken = function () {
     },
     process.env.ACCESS_TOKEN_SECRET,
     {
-      expiredIn: process.env.ACCESS_TOKEN_EXPIRY,
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
     }
   );
 };
-
+// refresh token hav less info because it refreshing every time only id required
 userSchema.methods.generateRefreshToken = function () {
   return jwt.sign(
     {
       _id: this._id,
     },
-    process.env.ACCESS_TOKEN_SECRET,
+    process.env.REFRESH_TOKEN_SECRET,
     {
-      expiredIn: process.env.REFRESH_TOKEN_EXPIRY,
+      expiresIn : process.env.REFRESH_TOKEN_EXPIRY,
     }
   );
 };

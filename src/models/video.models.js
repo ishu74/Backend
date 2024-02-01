@@ -40,6 +40,6 @@ const videoSchema = new Schema(
   },
   { timestamps: true }
 );
-
+// injection of plugin
 videoSchema.plugin(mongooseAggregatePaginate)
 export const Video = mongoose.model("Video", videoSchema);
