@@ -1,11 +1,12 @@
 //this middle only for checkin purpose , user is exist or not
 
-import  {ApiError}  from "../utils/ApiError.js";
+import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import jwt from "jsonwebtoken";
 import { User } from "../models/user.models.js";
 
-export const verifyJWT = asyncHandler(async (req, _, next) => { // res is empty thats y
+export const verifyJWT = asyncHandler(async (req, _, next) => {
+  // res is empty thats y
   try {
     const token =
       req.cookies?.accessToken ||
@@ -17,15 +18,14 @@ export const verifyJWT = asyncHandler(async (req, _, next) => { // res is empty 
     const user = await User.findById(decodedToken?._id).select(
       "-password -refreshToken"
     );
-    if (!user){
+    if (!user) {
       //TODO:frontend
-      throw new ApiError(401,"Invalid Access Token")
+      throw new ApiError(401, "Invalid Access Token");
     }
-  //next
+    //next
     req.user = user;
-    next()
+    next();
   } catch (error) {
-    throw new ApiError(401,"Invalid AccessToken")
+    throw new ApiError(401, "Invalid AccessToken");
   }
 });
-
